@@ -26,6 +26,12 @@ Screw.Unit(function() {
       it("changes the stubbed method's return value", function() {
         expect(item.foo()).to(equal, "STUBBED");
       });
+      
+      it("can stub multiple methods", function() {
+        JJ.stub(item).bar.returns("OTHER STUBBED");
+        expect(item.foo()).to(equal, "STUBBED");
+        expect(item.bar()).to(equal, "OTHER STUBBED");
+      });
     });
     
     describe("reset", function() {
@@ -33,7 +39,14 @@ Screw.Unit(function() {
         JJ.stub(item).foo.returns("STUBBED");
       });
       
-      it("resets stubs", function() {
+      it("resets an item", function() {
+        JJ.reset(item);
+        expect(item.bar()).to(equal, "BAR")
+        expect(item.foo()).to(equal, "FOO");
+      });
+      
+      it("resets item when multiple methods are stubbed", function() {
+        JJ.stub(item).bar.returns("OTHER STUBBED");
         JJ.reset(item);
         expect(item.bar()).to(equal, "BAR")
         expect(item.foo()).to(equal, "FOO");

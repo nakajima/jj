@@ -37,12 +37,13 @@
   });
 
   JJ.stub = function(target) {
-    return new JJ.Proxy(target);
+    return JJ.pristineCache[target] || new JJ.Proxy(target);
   }
   
   JJ.reset = function(target) {
     if (proxy = JJ.pristineCache[target])
       proxy.reset();
+      delete(JJ.pristineCache[target]);
   }
   
   window.JJ = JJ;
