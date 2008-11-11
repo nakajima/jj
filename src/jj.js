@@ -10,6 +10,18 @@
     this.storePristine();
   }
   
+  JJ.MethodProxy = function(proxy, name, fn) {
+    this.proxy = proxy;
+    this.name = name;
+    this.fn = fn;
+  }
+  
+  $.extend(JJ.MethodProxy.prototype, {
+    returns: function(value) {
+      this.proxy.target[this.name] = function() { return value; }
+    }
+  })
+  
   $.extend(JJ.Proxy.prototype, {
     storePristine: function() {
       for (idx in this.target) {
@@ -22,11 +34,7 @@
     },
     
     stubMethod: function(name, fn) {
-      var proxy = this;
-      proxy[name] = function() { fn.apply(proxy, arguments); }
-      proxy[name].returns = function(value) {
-        proxy.target[name] = function() { return value; }
-      }
+      this[name] = new JJ.MethodProxy(this, name, fn);
     },
     
     reset: function() {
