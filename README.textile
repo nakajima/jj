@@ -82,6 +82,42 @@ Note that this feature is still a bit buggy. Use with caution.
 Big credit should go to Brian Takita for creating RR, the best
 doggone' test double framework there ever were.
 
+h3. Using with Screw.Unit
+
+To use JJ with Screw.Unit, make sure you're using Brian's recent branch
+that passes the @screwContext@ into your tests. Then, in an after block,
+add @JJ.verify(screw)@:
+
+<pre>
+Screw.Unit(function(screw) { with(screw) {
+  describe("JJ", function() {
+    var item;
+    
+    before(function() {
+      JJ.reset();
+      item = { foo: "FOO!" };
+    });
+    
+    it("receives foo", function() {
+      JJ.mock(item).foo.returns("FOO!");
+    });
+    
+    after(function() {
+      JJ.verify(screw);
+      JJ.reset();
+    });
+  });
+}});
+</pre>
+
+You can also set how many times the method should be called:
+
+  JJ.mock(item).foo.times(3);
+  
+This will make your test only pass when the @foo@ method gets
+called 3 times on @item@. If you don't specify a specific number,
+then your test will pass as long as the method was called at least once.
+
 h4. Todo
 
 * Mocks

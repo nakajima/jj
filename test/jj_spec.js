@@ -33,6 +33,15 @@ Screw.Unit(function() {
         expect(item.bar()).to(equal, "OTHER STUBBED");
       });
       
+      it("tracks call counts", function() {
+        JJ.stub(item).bar.returns("OK");
+        expect(JJ.stub(item).bar.callCount()).to(equal, 0);
+        item.bar();
+        expect(JJ.stub(item).bar.callCount()).to(equal, 1);
+        item.bar();
+        expect(JJ.stub(item).bar.callCount()).to(equal, 2);
+      });
+      
       describe("with a context", function() {
         before(function() {
           JJ.stub(item, function(stub) {
