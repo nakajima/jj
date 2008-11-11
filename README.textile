@@ -120,6 +120,7 @@ then your test will pass as long as the method was called at least once.
 
 h4. Todo
 
+* Code cleanup. Big time.
 * Mocks
 * argument awareness
 * Probes
