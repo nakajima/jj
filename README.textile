@@ -1,0 +1,45 @@
+h1. JJ
+
+A mock framework for JavaScript in the spirit of RR.
+
+h3. Usage
+
+h4. Requires jQuery
+
+Sample object:
+
+  var item = {
+    foo: function() { return "FOO"; },
+    bar: function() { return "BAR"; }
+  }
+  
+  item.foo(); // => "FOO"
+  item.bar(); // => "BAR"
+  
+Stubbing a method:
+  
+  JJ.stub(item).foo.returns("STUBBED");
+
+  item.foo(); // => "STUBBED"
+  item.bar(); // => "BAR"
+
+Resetting an object:
+  
+  JJ.reset(item);
+  
+  item.foo(); // => "FOO"
+  item.bar(); // => "BAR"
+
+Big credit should go to Brian Takita for creating RR, the best
+doggone' test double framework there ever were.
+
+h4. Todo
+
+* Mocks
+* argument awareness
+* Probes
+* Integration with Screw.Unit
+* Spies
+
+
+(c) Copyright 2008 Pat Nakajima, released under MIT License.
