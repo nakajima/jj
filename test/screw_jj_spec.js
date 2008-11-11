@@ -32,6 +32,11 @@ Screw.Unit(function(screw) { with(screw) {
       expect(JJ.mock(item).foo.callCount()).to(equal, 2);
     });
     
+    it("can be called off by resetting", function() {
+      JJ.mock(item).foo.times(3);
+      JJ.reset(item);
+    })
+    
     after(function() {
       JJ.verify(screw);
       JJ.reset(item);
