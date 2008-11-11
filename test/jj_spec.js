@@ -57,6 +57,31 @@ Screw.Unit(function() {
       });
     });
     
+    describe("a stub context", function() {
+      before(function() {
+        JJ.stub(item, function(stub) {
+          stub.foo.returns("CONTEXT-FOO")
+          stub.fizz.returns("FIZZ");
+          stub.buzz.returns("BUZZ");
+        });
+      });
+      
+      it("allows stub declarations on function argument", function() {
+        expect(item.foo()).to(equal, "CONTEXT-FOO");
+      });
+      
+      it("allows stubbing of methods that don't exist", function() {
+        expect(item.fizz()).to(equal, "FIZZ");
+        expect(item.buzz()).to(equal, "BUZZ");
+      });
+      
+      it("resets dynamically added stub context methods", function() {
+        JJ.reset(item);
+        expect(item.fizz).to(be_undefined);
+        expect(item.buzz).to(be_undefined);
+      });
+    });
+    
     after(function() {
       JJ.reset(item);
     });

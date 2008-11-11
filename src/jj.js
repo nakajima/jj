@@ -6,14 +6,14 @@
   JJ.Proxy = function(target) {
     JJ.pristineCache[target] = this;
     this.target = target;
+    this.fakeProperties = [];
     this.targetProperties = new Object();
     this.storePristine();
   }
   
-  JJ.MethodProxy = function(proxy, name, fn) {
+  JJ.MethodProxy = function(proxy, name) {
     this.proxy = proxy;
     this.name = name;
-    this.fn = fn;
   }
   
   $.extend(JJ.MethodProxy.prototype, {
@@ -34,18 +34,50 @@
     },
     
     stubMethod: function(name, fn) {
-      this[name] = new JJ.MethodProxy(this, name, fn);
+      if (!fn) { this.fakeProperties.push(name); }
+      this[name] = new JJ.MethodProxy(this, name);
     },
     
     reset: function() {
+      for (idx in this.fakeProperties) {
+        delete(this.target[this.fakeProperties[idx]]);
+      }
+      
       for (idx in this.targetProperties) {
         this.target[idx] = this.targetProperties[idx];
       }
+    },
+    
+    stubEval: function(fn) {
+      try {
+        fn(this)
+      } catch(e) {
+        var fnSrc = fn.toString();
+        var varName = (fnSrc.match(/function\s*\((\w+)\)\s*\{/) || [])[1];
+        var matcher = new RegExp(varName + "\\.(\\w+)");
+        var lines = fnSrc.split(/\n+/);
+        
+        var def = function(m) {
+          if (!this.target[m]) {
+            this.target[m] = function() { }
+            this.stubMethod(m);
+          }
+        }
+        
+        for (i in lines) {
+          var matches = lines[i].match(matcher) || [];
+          if (m = matches[1]) { def.call(this, m); }
+        }
+      }
+      
+      fn(this);
     }
   });
 
-  JJ.stub = function(target) {
-    return JJ.pristineCache[target] || new JJ.Proxy(target);
+  JJ.stub = function(target, fn) {
+    var objectProxy = JJ.pristineCache[target] || new JJ.Proxy(target);
+    if (fn) { objectProxy.stubEval(fn); }
+    return objectProxy;
   }
   
   JJ.reset = function(target) {

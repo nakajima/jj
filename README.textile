@@ -30,6 +30,29 @@ Resetting an object:
   item.foo(); // => "FOO"
   item.bar(); // => "BAR"
 
+h3. Stub Contexts
+
+In an attempt to get the kind of dynamic stub declaration that RR
+provides, I'm working on "stub contexts" for JJ, where you pass a
+function as the second argument to the @JJ.stub@ call. Within there,
+you can stub methods that may or may not actually be implemented in
+the target object:
+
+  JJ.stub(item, function(stub) {
+    stub.foo.returns("FROM CONTEXT"); // foo is already defined
+    stub.mix.returns("A NEW METHOD"); // mix is added dynamically
+  });
+  
+  item.foo() // => "FROM CONTEXT"
+  item.mix() // => "A NEW METHOD"
+  
+  JJ.reset(item);
+  
+  item.foo() // => "FOO"
+  item.mix() // => TypeError
+
+Note that this feature is still a bit buggy. Use with caution.
+
 Big credit should go to Brian Takita for creating RR, the best
 doggone' test double framework there ever were.
 
