@@ -14,7 +14,7 @@ Screw.Unit(function() {
       expect(item.bar()).to(equal, "BAR");
     });
     
-    describe("stub", function() {
+    describe(".stub", function() {
       before(function() {
         JJ.stub(item).foo.returns("STUBBED");
       })
@@ -32,9 +32,34 @@ Screw.Unit(function() {
         expect(item.foo()).to(equal, "STUBBED");
         expect(item.bar()).to(equal, "OTHER STUBBED");
       });
+      
+      describe("with a context", function() {
+        before(function() {
+          JJ.stub(item, function(stub) {
+            stub.foo.returns("CONTEXT-FOO")
+            stub.fizz.returns("FIZZ");
+            stub.buzz.returns("BUZZ");
+          });
+        });
+
+        it("allows stub declarations on function argument", function() {
+          expect(item.foo()).to(equal, "CONTEXT-FOO");
+        });
+
+        it("allows stubbing of undefined methods", function() {
+          expect(item.fizz()).to(equal, "FIZZ");
+          expect(item.buzz()).to(equal, "BUZZ");
+        });
+
+        it("resets dynamically added stub context methods", function() {
+          JJ.reset(item);
+          expect(item.fizz).to(be_undefined);
+          expect(item.buzz).to(be_undefined);
+        });
+      });
     });
     
-    describe("reset", function() {
+    describe(".reset", function() {
       before(function() {
         JJ.stub(item).foo.returns("STUBBED");
       });
@@ -57,28 +82,24 @@ Screw.Unit(function() {
       });
     });
     
-    describe("a stub context", function() {
+    describe("#method", function() {
       before(function() {
-        JJ.stub(item, function(stub) {
-          stub.foo.returns("CONTEXT-FOO")
-          stub.fizz.returns("FIZZ");
-          stub.buzz.returns("BUZZ");
-        });
+        JJ.stub(item).method("foo").returns("METHOD-FOO");
+        JJ.stub(item).method("fizz").returns("FIZZ");
+      })
+      
+      it("allows stubbing for pre-defined methods", function() {
+        expect(item.foo()).to(equal, 'METHOD-FOO');
       });
       
-      it("allows stub declarations on function argument", function() {
-        expect(item.foo()).to(equal, "CONTEXT-FOO");
-      });
-      
-      it("allows stubbing of methods that don't exist", function() {
+      it("allows stubbing for undefined methods", function() {
         expect(item.fizz()).to(equal, "FIZZ");
-        expect(item.buzz()).to(equal, "BUZZ");
       });
       
-      it("resets dynamically added stub context methods", function() {
+      it("gets reset", function() {
         JJ.reset(item);
+        expect(item.foo()).to(equal, "FOO");
         expect(item.fizz).to(be_undefined);
-        expect(item.buzz).to(be_undefined);
       });
     });
     

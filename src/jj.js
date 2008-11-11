@@ -2,15 +2,7 @@
   var JJ = {
     pristineCache: { }
   }
-  
-  JJ.Proxy = function(target) {
-    JJ.pristineCache[target] = this;
-    this.target = target;
-    this.fakeProperties = [];
-    this.targetProperties = new Object();
-    this.storePristine();
-  }
-  
+
   JJ.MethodProxy = function(proxy, name) {
     this.proxy = proxy;
     this.name = name;
@@ -20,7 +12,15 @@
     returns: function(value) {
       this.proxy.target[this.name] = function() { return value; }
     }
-  })
+  });
+  
+  JJ.Proxy = function(target) {
+    JJ.pristineCache[target] = this;
+    this.target = target;
+    this.fakeProperties = [];
+    this.targetProperties = new Object();
+    this.storePristine();
+  }
   
   $.extend(JJ.Proxy.prototype, {
     storePristine: function() {
@@ -28,14 +28,15 @@
         var prop = this.target[idx];
         this.targetProperties[idx] = prop;
         if ($.isFunction(prop)) {
-          this.stubMethod(idx, prop);
+          this.method(idx, prop);
         }
       }
     },
     
-    stubMethod: function(name, fn) {
-      if (!fn) { this.fakeProperties.push(name); }
+    method: function(name, fn) {
       this[name] = new JJ.MethodProxy(this, name);
+      if (!fn) { this.fakeProperties.push(name); }
+      return this[name];
     },
     
     reset: function() {
@@ -48,6 +49,10 @@
       }
     },
     
+    // This method is highly suspect. If only other browsers gave
+    // more informative error messages, we could see what the missing
+    // method was. As it is, we're just looking for method invocations
+    // based on regular expressions.
     stubEval: function(fn) {
       try {
         fn(this)
@@ -60,7 +65,7 @@
         var def = function(m) {
           if (!this.target[m]) {
             this.target[m] = function() { }
-            this.stubMethod(m);
+            this.method(m);
           }
         }
         

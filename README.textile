@@ -16,19 +16,45 @@ Sample object:
   item.foo(); // => "FOO"
   item.bar(); // => "BAR"
   
-Stubbing a method:
+h3. Stubbing methods that have already been defined
+
+If you just want to stub a method that's already been defined for
+the target object, you can use the most concise form of JJ stub
+declaration, which is just calling @returns@ on the stubbed method,
+passing the value you'd like returned:
   
   JJ.stub(item).foo.returns("STUBBED");
 
   item.foo(); // => "STUBBED"
   item.bar(); // => "BAR"
 
-Resetting an object:
+h3. Stubbing undefined methods
+
+The syntax for stubbing methods that are not defined on the target
+object is more verbose, though not by much. Call @method@ on the stub
+proxy, passing the name of the method you'd like to stub. Then call
+@returns@ on that.
+
+Note that you can also use this style for stubbing methods are defined
+on the target object. I just don't think it's as pretty.
+
+  JJ.stub(item).method('whiz').returns('bang!');
+
+  item.whiz(); // => "bang!"
+
+  JJ.reset(item);
+
+  item.whiz(); // => TypeError
+
+h3. Resetting an object:
+
+To reset an object, just call @JJ.reset@ and pass the object.
   
   JJ.reset(item);
   
   item.foo(); // => "FOO"
   item.bar(); // => "BAR"
+
 
 h3. Stub Contexts
 
@@ -63,6 +89,5 @@ h4. Todo
 * Probes
 * Integration with Screw.Unit
 * Spies
-
 
 (c) Copyright 2008 Pat Nakajima, released under MIT License.
