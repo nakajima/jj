@@ -2,9 +2,9 @@ h1. JJ
 
 A mock framework for JavaScript in the spirit of RR.
 
-h3. Usage
+To run the tests, build the dist/jj.js file by running @rake dist@.
 
-h4. Requires jQuery
+h3. Usage
 
 Sample object:
 
