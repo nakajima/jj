@@ -1,20 +1,20 @@
 var JJ = {
   stubCache: { },
-  mockCache: { }
-}
-
-JJ.extend = function(target, features) {
-  for (key in features) {
-    target[key] = features[key];
+  mockCache: { },
+  
+  extend: function(target, features) {
+    for (key in features) {
+      target[key] = features[key];
+    }
+  },
+  
+  isFunction: function(fn) {
+  	return !!fn && typeof fn != "string" && !fn.nodeName &&
+  		fn.constructor != Array && /^[\s[]?function/.test( fn + "" );
   }
 }
 
-JJ.isFunction = function( fn ) {
-	return !!fn && typeof fn != "string" && !fn.nodeName &&
-		fn.constructor != Array && /^[\s[]?function/.test( fn + "" );
-}
-
-JJ.verify = function(screw) {
+JJ.verify = function verify(screw) {
   for (i in JJ.mockCache) {
     var proxy = JJ.mockCache[i]
     for (m in proxy.methods) {
@@ -23,19 +23,19 @@ JJ.verify = function(screw) {
   }
 }
 
-JJ.mock = function(target, fn) {
+JJ.mock = function mock(target, fn) {
   var objectProxy = JJ.mockCache[target] || new JJ.MockProxy(target);
   if (fn) { objectProxy.mockEval(fn); }
   return objectProxy;
 }
 
-JJ.stub = function(target, fn) {
+JJ.stub = function stub(target, fn) {
   var objectProxy = JJ.stubCache[target] || new JJ.StubProxy(target);
   if (fn) { objectProxy.stubEval(fn); }
   return objectProxy;
 }
 
-JJ.reset = function(target) {
+JJ.reset = function reset(target) {
   if (proxy = JJ.mockCache[target]) {
     proxy.reset();
     delete(JJ.mockCache[target]);
