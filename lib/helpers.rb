@@ -14,6 +14,7 @@ def read_template
 end
 
 def write_dist(content)
+  FileUtils.rm_rf(File.dirname(JJ_DIST))
   FileUtils.mkdir_p(File.dirname(JJ_DIST))
   File.open(JJ_DIST, 'w') do |f|
     f << content

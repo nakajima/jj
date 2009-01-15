@@ -1,7 +1,7 @@
 JJ.MockProxy = function(target) {
   JJ.mockCache[target] = this;
   this.target = target;
-  this.methods = { };
+  this.expectations = { };
   this.storePristine();
 }
 
@@ -20,6 +20,7 @@ JJ.extend(JJ.MockProxy.prototype, {
   
   method: function(name, fn) {
     this[name] = new JJ.MethodProxy(this, name, (fn || this.target[name]));
+    this.expect(this[name]);
     if (!fn) { this.fakeProperties.push(name); }
     return this[name];
   },
@@ -35,6 +36,6 @@ JJ.extend(JJ.MockProxy.prototype, {
   },
   
   expect: function(method) {
-    this.methods[method] = this.methods[method] || new JJ.MethodExpectation(method);
+    this.expectations[method] = this.expectations[method] || new JJ.MethodExpectation(method);
   }
 });

@@ -1,6 +1,6 @@
 Screw.Unit(function(screw) { with(screw) {
   with(JJ) {
-    describe("JJ Screw.Unit integration", function() {
+    describe("JJ Mocking", function() {
       var item;
     
       before(function() {
@@ -9,6 +9,28 @@ Screw.Unit(function(screw) { with(screw) {
           foo: function() { return "FOO"; },
           bar: function() { return "BAR"; }
         }
+      });
+    
+      describe("satisfied", function() {
+        before(function() {
+          mock(item).method('foo');
+        });
+        
+        describe("when mocked methods have not been called", function() {
+          it("is not satisfied", function() {
+            expect(JJ.satisfied()).to(be_false);
+          });
+        });
+        
+        describe("when mocked methods have been called", function() {
+          before(function() {
+            item.foo();
+          });
+          
+          it("is satisfied", function() {
+            expect(JJ.satisfied()).to(be_true);
+          });
+        });
       });
     
       it("verifies mocks were called", function() {

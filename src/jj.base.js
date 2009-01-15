@@ -23,6 +23,28 @@ JJ.verify = function verify(screw) {
   }
 }
 
+JJ.satisfied = function satisfied() {
+  var UnsatisfiedExpectation = function(name) {
+    this.name = "UnsatisfiedExpectation"
+    this.message = "method not called";
+  }
+  
+  try {
+    for (i in JJ.mockCache) {
+      var proxy = JJ.mockCache[i];
+      for (m in proxy.expectations) {
+        var expectation = proxy.expectations[m];
+        if (!expectation.satisfied()) {
+          throw new UnsatisfiedExpectation();
+        }
+      }
+    }
+    return true;
+  } catch(UnsatisfiedExpectation) {
+    return false;
+  }
+}
+
 JJ.mock = function mock(target, fn) {
   var objectProxy = JJ.mockCache[target] || new JJ.MockProxy(target);
   if (fn) { objectProxy.mockEval(fn); }
